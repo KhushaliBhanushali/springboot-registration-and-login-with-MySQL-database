@@ -11,10 +11,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfiguration {
     @Autowired
     private DataSource dataSource;
      
@@ -37,15 +38,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return authProvider;
     }
  
-    @Override
+    @Bean
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authenticationProvider());
     }
  
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public void filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-            .antMatchers("/users").authenticated()
+            .requestMatchers("/users").authenticated()
             .anyRequest().permitAll()
             .and()
             .formLogin()
